@@ -16,6 +16,7 @@
   },
   "scripts": {
     "build": "PUBLIC_URL=http://hnswave.co/crypto-prices/ react-scripts build",
+    "deploy": "rsync -r -a -v -e ssh --delete build/ droplet:/root/www/crypto-prices",
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.js --fix",
     "start": "react-scripts start",

@@ -1,11 +1,11 @@
-import { blue, pink } from '@material-ui/core/colors';
+import { deepPurple, pink } from '@material-ui/core/colors';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: blue[500],
+      main: deepPurple[400],
     },
     secondary: {
       main: pink[500],

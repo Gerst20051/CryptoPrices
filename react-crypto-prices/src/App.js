@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import CryptoTable from './CryptoTable';
+import Header from './Header';
 
 function daysBetween(from, to) {
   const timeDifference = to.getTime() - from.getTime();
@@ -15,6 +16,10 @@ function transformCryptos(cryptos) {
     days_since_ath: Math.floor(daysBetween(new Date(crypto.ath_date), new Date())),
     high_24h: crypto.high_24h,
     image: crypto.image,
+    image_symbol: {
+      image: crypto.image,
+      symbol: crypto.symbol.toUpperCase(),
+    },
     low_24h: crypto.low_24h,
     market_cap: crypto.market_cap,
     market_cap_percentage: `${((crypto.market_cap / totalMarketCap) * 100).toFixed(2)}%`,
@@ -29,6 +34,7 @@ function transformCryptos(cryptos) {
 
 function App() {
   const [cryptos, setCryptos] = useState([]);
+  const [lastFetchDate, setLastFetchDate] = useState(new Date());
 
   const columns = useMemo(
     () => [
@@ -37,12 +43,19 @@ function App() {
         accessor: 'market_cap_rank',
       },
       {
-        Header: 'Name',
-        accessor: 'name',
+        Header: 'Symbol',
+        accessor: 'image_symbol',
+        Cell: ({ cell: { value } }) => (
+          <span>
+            <img alt="" src={value.image} width={13} />
+            <span style={{ marginLeft: 10 }}><b>{value.symbol}</b></span>
+          </span>
+        ),
+        sortType: (a, b, c) => a.values[c].symbol.localeCompare(b.values[c].symbol),
       },
       {
-        Header: 'Symbol',
-        accessor: 'symbol',
+        Header: 'Name',
+        accessor: 'name',
       },
       {
         Header: 'Price',
@@ -64,24 +77,30 @@ function App() {
     []
   );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const params = {
-        vs_currency: 'usd',
-        order: 'market_cap_desc',
-        per_page: '100',
-        page: '1',
-        sparkline: 'false',
-      };
-      const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?${new URLSearchParams(params)}`);
-      const json = await response.json();
-      setCryptos(transformCryptos(json));
+  const fetchCryptos = async () => {
+    const params = {
+      order: 'market_cap_desc',
+      page: '1',
+      per_page: '100',
+      sparkline: 'false',
+      vs_currency: 'usd',
     };
+    const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?${new URLSearchParams(params)}`);
+    const json = await response.json();
+    setCryptos(transformCryptos(json));
+  };
 
-    fetchData();
-  }, []);
+  useEffect(() => {
+    fetchCryptos();
+    setTimeout(() => setLastFetchDate(new Date()), 60E3);
+  }, [lastFetchDate]);
 
-  return <CryptoTable columns={columns} data={cryptos} />;
+  return (
+    <Fragment>
+      <Header text="Crypto Prices Dashboard" />
+      <CryptoTable columns={columns} data={cryptos} />
+    </Fragment>
+  );
 }
 
 export default App;

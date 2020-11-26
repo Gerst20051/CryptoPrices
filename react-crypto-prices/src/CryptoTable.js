@@ -17,7 +17,7 @@ function CryptoTable({ columns, data }) {
           <TableRow {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
               <TableCell {...column.getHeaderProps(column.getSortByToggleProps())}>
-                {column.render('Header')}
+                <b>{column.render('Header')}</b>
                 <span>
                   {column.isSorted
                     ? column.isSortedDesc
