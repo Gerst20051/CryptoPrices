@@ -1,3 +1,5 @@
+import { green, red } from '@material-ui/core/colors';
+import { makeStyles } from '@material-ui/core/styles';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import CryptoTable from './CryptoTable';
@@ -32,9 +34,19 @@ function transformCryptos(cryptos) {
   }));
 }
 
+const useStyles = makeStyles(theme => ({
+  green: {
+    color: green[500],
+  },
+  red: {
+    color: red[500],
+  },
+}));
+
 function App() {
   const [cryptos, setCryptos] = useState([]);
   const [lastFetchDate, setLastFetchDate] = useState(new Date());
+  const classes = useStyles();
 
   const columns = useMemo(
     () => [
@@ -56,6 +68,7 @@ function App() {
       {
         Header: 'Name',
         accessor: 'name',
+        sortType: (a, b, c) => a.values[c].toLowerCase().localeCompare(b.values[c].toLowerCase()),
       },
       {
         Header: 'Price',
@@ -64,6 +77,12 @@ function App() {
       {
         Header: '24h',
         accessor: 'price_change_percentage_24h',
+        Cell: ({ cell: { value } }) => (
+          <span className={value[0] === '-' ? classes.red : classes.green}>
+            {value[0] === '-' ? value.slice(1) : value}
+          </span>
+        ),
+        sortType: (a, b, c) => parseFloat(a.values[c]) - parseFloat(b.values[c]),
       },
       {
         Header: 'Market Share',
@@ -74,7 +93,7 @@ function App() {
         accessor: 'days_since_ath',
       },
     ],
-    []
+    [classes.green, classes.red]
   );
 
   const fetchCryptos = async () => {
