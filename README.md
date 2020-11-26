@@ -6,9 +6,9 @@ Open [http://hnswave.co/crypto-prices/](http://hnswave.co/crypto-prices/) to vie
 
 ## Frontend Instructions
 
-### Install Dependencies
-
 [$]> `cd react-crypto-manager`
+
+### Install Dependencies
 
 [$]> `nvm use`
 
@@ -22,7 +22,12 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ### Run Testing Scripts
 
-[$]> `npm test`
+[$]> `npm test` => `react-scripts test`
+
+### Run Linters
+
+[$]> `npm lint` => `eslint src/**/*.js`
+[$]> `npm lint:fix` => `eslint src/**/*.js --fix`
 
 ### Build Production Deployment
 
