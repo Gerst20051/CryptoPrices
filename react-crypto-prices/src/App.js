@@ -46,6 +46,7 @@ const useStyles = makeStyles(theme => ({
 function App() {
   const [cryptos, setCryptos] = useState([]);
   const [lastFetchDate, setLastFetchDate] = useState(new Date());
+  const [searchTerm, setSearchTerm] = useState('');
   const classes = useStyles();
 
   const columns = useMemo(
@@ -116,8 +117,15 @@ function App() {
 
   return (
     <Fragment>
-      <Header text="Crypto Prices Dashboard" />
-      <CryptoTable columns={columns} data={cryptos} />
+      <Header text="Crypto Prices Dashboard" setSearchTerm={setSearchTerm} />
+      <CryptoTable columns={columns} data={
+        searchTerm
+          ? cryptos.filter(crypto => (
+            crypto.name.toLowerCase().includes(searchTerm.toLowerCase())
+              || crypto.symbol.includes(searchTerm.toUpperCase())
+          ))
+          : cryptos
+      } />
     </Fragment>
   );
 }
